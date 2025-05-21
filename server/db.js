@@ -41,9 +41,9 @@ function storeMetrics(metrics) {
 }
 
 /**
- * gets metrics history for the last X hours
- * @param {number} hours - # hours to look back
- * @returns {Promise<Array>} - array of metrics objects
+ * Gets metrics history for the last X hours
+ * @param {number} hours - Number of hours to look back
+ * @returns {Promise<Array>} - Array of metrics objects
  */
 function getMetricsHistory(hours = 24) {
   return new Promise((resolve, reject) => {
@@ -65,7 +65,7 @@ function getMetricsHistory(hours = 24) {
 }
 
 /**
- * wipes all metrics from db
+ * Wipes all metrics from db
  * @returns {Promise<void>}
  */
 function wipeAllMetrics() {
@@ -75,7 +75,7 @@ function wipeAllMetrics() {
         console.error('Error wiping all metrics:', err);
       } else {
         console.log('All metrics wiped from database');
-        // reset the AUTOINCREMENT sequence
+        // Reset the AUTOINCREMENT sequence
         db.run("DELETE FROM sqlite_sequence WHERE name='metrics'", (seqErr) => {
           if (seqErr) {
             console.error('Error resetting metrics ID sequence:', seqErr);
@@ -89,7 +89,7 @@ function wipeAllMetrics() {
 }
 
 /**
- * closes the database connection
+ * Closes the database connection
  * @returns {Promise<void>}
  */
 function closeDatabase() {

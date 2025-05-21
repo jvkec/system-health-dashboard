@@ -1,21 +1,20 @@
 /**
- * collector fetches system metrics (CPU/disk/memory stats). 
+ * Collector fetches system metrics (CPU/disk/memory stats). 
  */
 const os = require('os');
 const util = require('util');
 const { parse } = require('path');
 const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
-// DOCUMENTATION FOR PROMISIFIY: https://www.geeksforgeeks.org/node-js-util-promisify-method/
 const alerts = require('./alerts');
 
 /**
- * calc cpu usage percentage based on the difference between two readings across all cores. 
- * @returns {Promise<number>} - cpu usage percentage
+ * Calculates CPU usage percentage based on the difference between two readings across all cores. 
+ * @returns {Promise<number>} - CPU usage percentage
  */
 async function getCpuUsage() {
-  const cpuStart = os.cpus(); // get all cpu cores' times
-  await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec wait 
+  const cpuStart = os.cpus(); // Get all cpu cores' times
+  await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second wait 
   const cpuEnd = os.cpus();
 
   let totalIdle = 0;
@@ -36,8 +35,8 @@ async function getCpuUsage() {
 }
 
 /**
- * calculates memory usage percentage
- * @returns {number} - memory usage percentage
+ * Calculates memory usage percentage
+ * @returns {number} - Memory usage percentage
  */
 function getMemoryUsage() {
   const totalMem = os.totalmem();
@@ -48,8 +47,8 @@ function getMemoryUsage() {
 }
 
 /**
- * get disk usage percentage
- * @returns {Promise<number>} - disk usage percentage
+ * Get disk usage percentage
+ * @returns {Promise<number>} - Disk usage percentage
  */
 async function getDiskUsage() {
   try {
@@ -69,8 +68,8 @@ async function getDiskUsage() {
 }
 
 /**
- * gets all system metrics
- * @returns {Promise<Object>} - system metrics
+ * Gets all system metrics
+ * @returns {Promise<Object>} - System metrics
  */
 async function getCurrentMetrics() {
   return {
@@ -82,11 +81,11 @@ async function getCurrentMetrics() {
 }
 
 /**
- * starts collecting metrics at a specified interval
- * @param {} interval - interval in ms
+ * Starts collecting metrics at a specified interval
+ * @param {} interval - Interval in milliseconds
  * @returns {Promise<void>}
  */
-async function startMetricsCollection(interval = 30000) { // default --> 30 seconds
+async function startMetricsCollection(interval = 30000) { // Default: 30 seconds
   const db = require('./db');
   
   console.log(`Starting metrics collection every ${interval/1000} seconds`);

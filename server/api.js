@@ -5,7 +5,7 @@ const alertSystem = require('./alerts');
 
 const router = express.Router();
 
-// get current system metrics
+// Get current system metrics
 router.get('/metrics/current', async (req, res) => {
   try {
     const metrics = await collector.getCurrentMetrics();
@@ -23,12 +23,12 @@ router.get('/metrics/current', async (req, res) => {
   }
 });
 
-// get historical metrics data
+// Get historical metrics data
 router.get('/metrics/history', async (req, res) => {
   try {
     const hours = parseInt(req.query.hours || '24', 10);
     
-    // validate hours parameter
+    // Validate hours parameter
     if (isNaN(hours) || hours <= 0 || hours > 168) { // max. 7 days
       return res.status(400).json({
         success: false,
@@ -38,7 +38,7 @@ router.get('/metrics/history', async (req, res) => {
     
     const data = await db.getMetricsHistory(hours);
     
-    // format data for Charts.js
+    // Format data for Charts.js
     const timestamps = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
     const cpuData = data.map(entry => entry.cpu_usage);
     const memoryData = data.map(entry => entry.memory_usage);
@@ -83,7 +83,7 @@ router.get('/metrics/history', async (req, res) => {
   }
 });
 
-// get current threshold settings
+// Get current threshold settings
 router.get('/thresholds', (req, res) => {
   try {
     const thresholds = alertSystem.loadThresholds();
@@ -100,7 +100,7 @@ router.get('/thresholds', (req, res) => {
   }
 });
 
-// get alert status information
+// Get alert status information
 router.get('/alerts/status', (req, res) => {
   try {
     res.json({

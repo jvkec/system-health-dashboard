@@ -5,19 +5,19 @@ const path = require('path');
 
 dotenv.config();
 
-// track when alerts were last sent to prevent spam
+// Track when alerts were last sent to prevent spam
 const alertStatus = {
   cpu: { lastAlerted: null, isActive: false },
   memory: { lastAlerted: null, isActive: false },
   disk: { lastAlerted: null, isActive: false }
 };
 
-// min time between alerts (ms)
+// Minimum time between alerts (ms)
 const ALERT_COOLDOWN = 15 * 60 * 1000; // 15 minutes
 
 /**
- * holds the thresholds for cpu, memory, and disk usage
- * @returns {Object} - thresholds for cpu, memory, and disk usage
+ * Holds the thresholds for cpu, memory, and disk usage
+ * @returns {Object} - Thresholds for CPU, memory, and disk usage
  */
 function loadThresholds() {
   try {
@@ -26,24 +26,23 @@ function loadThresholds() {
       const data = fs.readFileSync(configPath, 'utf8');
       return JSON.parse(data);
     } else {
-      // default thresholds if file doesnt exist
       return { cpu: 80, memory: 85, disk: 90 };
     }
   } catch (error) {
     console.error('Error loading thresholds:', error);
-    return { cpu: 80, memory: 85, disk: 90 }; // default thresholds
+    return { cpu: 80, memory: 85, disk: 90 };
   }
 }
 
 /**
- * email transport configuration
- * @returns {Object} - nodemailer transport object
+ * Email transport configuration
+ * @returns {Object} - Nodemailer transport object
  */
 function createTransport() {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_SECURE === 'true', // false for TLS
+    secure: process.env.SMTP_SECURE === 'true', // False for TLS
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
@@ -52,15 +51,14 @@ function createTransport() {
 }
 
 /**
- * sends an email alert when a system metric exceeds its threshold
+ * Sends an email alert when a system metric exceeds its threshold
  * @param {*} metricType 
  * @param {*} value 
  * @param {*} threshold 
- * @returns {Promise<boolean>} - true if alert was sent, false otherwise
+ * @returns {Promise<boolean>} - True if alert was sent, false otherwise
  */
 async function sendAlert(metricType, value, threshold) {
   console.log(`Attempting to send alert for ${metricType}: ${value}% (threshold: ${threshold}%)`);
-  // console.log(`SMTP Config: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
   
   try {
     console.log('Creating transport...');
@@ -84,27 +82,27 @@ async function sendAlert(metricType, value, threshold) {
     
     console.log(`Sending email to: ${process.env.ALERT_TO}`);
     const info = await transport.sendMail(mailOptions);
-    console.log('\x1b[32m%s\x1b[0m', 'Alert email sent successfully!'); // green text
+    console.log('\x1b[32m%s\x1b[0m', 'Alert email sent successfully!');
     console.log(`Message ID: ${info.messageId}`);
-    console.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`); // false if not using test account
+    console.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`); // False if not using test account
     return true;
   } catch (error) {
-    console.error('\x1b[31m%s\x1b[0m', 'Error sending alert email:', error); // red text
+    console.error('\x1b[31m%s\x1b[0m', 'Error sending alert email:', error); // Red text
     return false;
   }
 }
 
 /**
- * checks system metrics against thresholds
- * @param {Object} metrics - system metrics object
- * @returns {Promise<boolean>} - true if alerts were sent, false otherwise
+ * Checks system metrics against thresholds
+ * @param {Object} metrics - System metrics object
+ * @returns {Promise<boolean>} - True if alerts were sent, false otherwise
  */
 async function checkThresholds(metrics) {
   const thresholds = loadThresholds();
   const now = Date.now();
   let alertsSent = false;
   
-  // check cpu
+  // Check CPU
   if (metrics.cpu > thresholds.cpu) {
     const lastAlert = alertStatus.cpu.lastAlerted;
     if (!lastAlert || (now - lastAlert > ALERT_COOLDOWN)) {
@@ -117,7 +115,7 @@ async function checkThresholds(metrics) {
     alertStatus.cpu.isActive = false;
   }
   
-  // check mem
+  // Check memory
   if (metrics.memory > thresholds.memory) {
     const lastAlert = alertStatus.memory.lastAlerted;
     if (!lastAlert || (now - lastAlert > ALERT_COOLDOWN)) {
@@ -130,7 +128,7 @@ async function checkThresholds(metrics) {
     alertStatus.memory.isActive = false;
   }
   
-  // check disk
+  // Check disk
   if (metrics.disk > thresholds.disk) {
     const lastAlert = alertStatus.disk.lastAlerted;
     if (!lastAlert || (now - lastAlert > ALERT_COOLDOWN)) {
@@ -149,5 +147,5 @@ async function checkThresholds(metrics) {
 module.exports = {
   checkThresholds,
   loadThresholds,
-  alertStatus // export for testing
+  alertStatus
 };
