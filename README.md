@@ -2,6 +2,14 @@
 
 A Node.js-based dashboard for monitoring system CPU, memory, and disk usage, with alerting and historical data visualization.
 
+## Screenshots
+
+### Email Alert Example
+![Email Alert](./docs/email.png)
+
+### Dashboard UI Example
+![Dashboard UI](./docs/dashboard.png)
+
 ## Features
 - Collects and stores system metrics (CPU, memory, disk) in a SQLite database
 - Displays metrics history in a web dashboard
